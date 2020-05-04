@@ -246,7 +246,6 @@ insert into pharamaceutical_contract values('Bryans drugs',5,4,'2017-01-01','202
 -- 1. The DEA wants to know if any patients of ours have been getting the same prescription 
 -- from multiple doctors. If there are, they want to know their name, address, the type of 
 -- drug, and the number of times they have got that prescription all within the last 30 days
-
 select Patient, address, Drug, Num_of_Doctors, from (
 	select p.name as Patient, p.address as address, count(d.name) as Num_of_Doctors,  pre.TRADE_NAME as Drug 
 		from PATIENT p left outer join D_AND_P dp on p.PATIENT_ID = dp.PATIENT_ID
@@ -263,8 +262,9 @@ where Num_of_Doctors > 1;
 --> Safa Mendoza 5525 strawberry ln, Salinas CA 93901 Adderall 2
 ;
 
--- 2. Which doctors prescribe the greatest number of drugs to patients under 30?
-
+-- 2. The DEA wants to see if doctors prescribe the most number drugs to patients under 30.
+-- They said that in their report, they want the name of the doctor, their specialty, and 
+-- how many prescriptions they have given out. 
 select DOCTOR.NAME, DOCTOR.SPECIALTY, count(*) as num_of_prescriptions from 
 DOCTOR join D_AND_P on DOCTOR.DOCTOR_ID = D_AND_P.DOCTOR_ID 
 join PRESCRIPTIONS on PRESCRIPTIONS.D_P_ID = D_AND_P.D_P_ID 
@@ -279,8 +279,8 @@ order by num_of_prescriptions desc, DOCTOR.NAME;
 --> Marcos Franco pediatrics 1
 ;
 
--- 3.What are the sales of the each of the pharmacies in the last 30 days? 
-
+-- 3. The CEO of the company wants to know what stores are performing well this month.
+-- What are the sales of the each of the pharmacies in the last 30 days? 
 select distinct(PHARMACY.NAME), sum(PHARMACY_INVENTORY.PRICE) as Sales from 
 PRESCRIPTIONS join DRUG on DRUG.TRADE_NAME = PRESCRIPTIONS.TRADE_NAME 
 join PHARMACY_INVENTORY on PHARMACY_INVENTORY.TRADE_NAME = DRUG.TRADE_NAME 
@@ -295,8 +295,9 @@ order by Sales desc;
 --> Alien Drugs and More 165.83
 ;
 
--- 4.Which pharmaceutical company sells the most drugs to patients?
-
+-- 4. The big wigs at corporate want to know which pharmaceutical company 
+-- we are contracted with is selling the most drugs within the company. 
+-- Which pharmaceutical company sells the most drugs to patients?
 select PHARAMACEUTICAL_CO.CO_NAME as Pharma, count(PATIENT.NAME) as num_of_products_sold
 from PATIENT 
 natural join D_AND_P 
@@ -309,8 +310,9 @@ order by  Pharma desc limit 1;
 --> Kyles drugs 12
 ;
 
--- 5. What is the average years of experience for doctors who prescribe Tramadol?
-
+-- 5. The DEA wants to make sure that the doctors who are prescribing controlled
+-- substances have some experience before prescribing them.
+-- What is the average years of experience for doctors who prescribe Tramadol?
 select avg(experience) from (
 	select DOCTOR.YEARS_OF_EX as experience from
 	DOCTOR natural join D_AND_P 
